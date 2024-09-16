@@ -4,7 +4,6 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import axios from 'axios';
-import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -40,23 +39,6 @@ const encodeImage = (imagePath) => {
     return Buffer.from(image).toString('base64');
 };
 
-async function query(filename) {
-    const data = fs.readFileSync(filename);
-    const response = await fetch(
-        "https://api-inference.huggingface.co/models/facebook/detr-resnet-50",
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.HF_API_KEY}`,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: data,
-        }
-    );
-    const result = await response.json();
-    return result;
-}
-
 app.post('/upload', (req, res) => {
     upload(req, res, async (err) => {
         if (err) {
@@ -71,23 +53,6 @@ app.post('/upload', (req, res) => {
         try {
             const base64Image = encodeImage(filePath);
 
-            // Detect images or logos in the uploaded image
-            const detectionResult = await query(filePath);
-            console.log('Detection Result:', JSON.stringify(detectionResult));
-
-            let hasImageOrLogo = 'no';
-            let detectedObjects = [];
-
-            if (detectionResult && Array.isArray(detectionResult)) {
-                detectedObjects = detectionResult.filter(obj => 
-                    obj.label === 'image' || obj.label === 'logo' || 
-                    obj.label.includes('picture') || obj.label.includes('photo')
-                );
-                if (detectedObjects.length > 0) {
-                    hasImageOrLogo = 'yes';
-                }
-            }
-
             const headers = {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
@@ -101,7 +66,7 @@ app.post('/upload', (req, res) => {
                         "content": [
                             {
                                 "type": "text",
-                                "text": `Generate code in ${req.body.framework} for the given layout along with the css using ${req.body.cssType}. Return the code in JSX format, ready to be used in a React component. Include both the JSX and CSS in your response. Make sure the generated code for the component is responsive for all the devices and screen sizes. Additional instructions: ${req.body.additionalInput}. Also, note that the image ${hasImageOrLogo === 'yes' ? 'contains' : 'does not contain'} other images or logos.${hasImageOrLogo === 'yes' ? ' Detected objects: ' + JSON.stringify(detectedObjects) : ''}`
+                                "text": `Generate code in ${req.body.framework} for the given layout along with the css using ${req.body.cssType}. Return the code in JSX format, ready to be used in a React component. Include both the JSX and CSS in your response. Make sure the generated code for the component is responsive for all the devices and screen sizes. Additional instructions: ${req.body.additionalInput}.`
                             },
                             {
                                 "type": "image_url",
@@ -140,13 +105,15 @@ app.post('/upload', (req, res) => {
                 generatedCode: {
                     jsx: cleanJsx,
                     css: cleanCss
-                },
-                hasImageOrLogo,
-                detectedObjects
+                }
             });
         } catch (error) {
             console.error('Error processing image:', error);
-            res.status(500).json({ error: 'Error processing image', details: error.message });
+            if (error.response && error.response.status === 403) {
+                res.status(403).json({ error: 'Error processing image', details: 'Request failed with status code 403. Please check your API key and permissions.' });
+            } else {
+                res.status(500).json({ error: 'Error processing image', details: error.message });
+            }
         }
     });
 });

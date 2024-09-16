@@ -6,6 +6,8 @@ const App = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [generatedCode, setGeneratedCode] = useState({ jsx: '', css: '' });
+  const [cssType, setCssType] = useState('');
+  const [additionalInput, setAdditionalInput] = useState('');
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -15,14 +17,24 @@ const App = () => {
     setSelectedFile(event.target.files[0]);
   };
 
+  const handleCssTypeChange = (event) => {
+    setCssType(event.target.value);
+  };
+
+  const handleAdditionalInputChange = (event) => {
+    setAdditionalInput(event.target.value);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('framework', selectedOption);
+    formData.append('cssType', cssType);
+    formData.append('additionalInput', additionalInput);
 
     try {
-      const response = await axios.post('http://localhost:8000/upload', formData, {
+      const response = await axios.post('http://localhost:8003/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -68,6 +80,30 @@ const App = () => {
             <option value="reactjs">React JS</option>
             <option value="nextjs">Next JS</option>
           </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="cssTypeSelect" className="form-label">Select CSS Type:</label>
+          <select 
+            id="cssTypeSelect" 
+            value={cssType} 
+            onChange={handleCssTypeChange}
+            className="css-type-select"
+          >
+            <option value="">--Please choose an option--</option>
+            <option value="tailwindcss">Tailwind CSS</option>
+            <option value="customcss">Custom CSS Classes</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="additionalInput" className="form-label">Additional Input:</label>
+          <textarea 
+            id="additionalInput" 
+            value={additionalInput} 
+            onChange={handleAdditionalInputChange}
+            className="additional-input"
+            rows="5"
+            placeholder="Enter any additional instructions or requirements..."
+          />
         </div>
         <button type="submit" className="submit-button">Submit</button>
       </form>
