@@ -66,7 +66,7 @@ app.post('/upload', (req, res) => {
                         "content": [
                             {
                                 "type": "text",
-                                "text": `Generate code in ${req.body.framework} for the given layout along with the css using ${req.body.cssType}. Return the code in JSX format, ready to be used in a React component. Include both the JSX and CSS in your response. Make sure the generated code for the component is responsive for all the devices and screen sizes. Additional instructions: ${req.body.additionalInput}.`
+                                "text": `Generate code in ${req.body.framework} for the given layout along with the css using ${req.body.cssType}. Return the code in JSX format, ready to be used in a React component. Include both the JSX and CSS in your response. The generated code should be optimized for desktop screens initially, but also be responsive to adapt to smaller screen sizes. Ensure that the layout looks great on large screens and gracefully adjusts for tablets and mobile devices. Additional instructions: ${req.body.additionalInput}.`
                             },
                             {
                                 "type": "image_url",

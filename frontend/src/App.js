@@ -55,82 +55,87 @@ const App = () => {
   };
 
   return (
-    <div className="app-container">
-      <form onSubmit={handleSubmit} className="upload-form">
-        <div className="form-group">
-          <label htmlFor="imageInput" className="form-label">Upload Image:</label>
-          <input 
-            type="file" 
-            id="imageInput" 
-            name="imageInput" 
-            accept="image/*" 
-            onChange={handleFileChange} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="frameworkSelect" className="form-label">Select Framework:</label>
-          <select 
-            id="frameworkSelect" 
-            value={selectedOption} 
-            onChange={handleOptionChange}
-            className="framework-select"
-          >
-            <option value="">--Please choose an option--</option>
-            <option value="reactjs">React JS</option>
-            <option value="nextjs">Next JS</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="cssTypeSelect" className="form-label">Select CSS Type:</label>
-          <select 
-            id="cssTypeSelect" 
-            value={cssType} 
-            onChange={handleCssTypeChange}
-            className="css-type-select"
-          >
-            <option value="">--Please choose an option--</option>
-            <option value="tailwindcss">Tailwind CSS</option>
-            <option value="customcss">Custom CSS Classes</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="additionalInput" className="form-label">Additional Input:</label>
-          <textarea 
-            id="additionalInput" 
-            value={additionalInput} 
-            onChange={handleAdditionalInputChange}
-            className="additional-input"
-            rows="5"
-            placeholder="Enter any additional instructions or requirements..."
-          />
-        </div>
-        <button type="submit" className="submit-button">Submit</button>
-      </form>
+    <div className="app-container dark-theme">
+      <header className="app-header">
+        <h1 className="site-title">PlumAI</h1>
+      </header>
+      <main className="main-content">
+        <form onSubmit={handleSubmit} className="upload-form">
+          <div className="form-group">
+            <label htmlFor="imageInput" className="form-label">Upload Image</label>
+            <input 
+              type="file" 
+              id="imageInput" 
+              name="imageInput" 
+              accept="image/*" 
+              onChange={handleFileChange} 
+              className="file-input"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="frameworkSelect" className="form-label">Select Framework</label>
+            <select 
+              id="frameworkSelect" 
+              value={selectedOption} 
+              onChange={handleOptionChange}
+              className="select-input"
+            >
+              <option value="">--Please choose an option--</option>
+              <option value="reactjs">React JS</option>
+              <option value="nextjs">Next JS</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="cssTypeSelect" className="form-label">Select CSS Type</label>
+            <select 
+              id="cssTypeSelect" 
+              value={cssType} 
+              onChange={handleCssTypeChange}
+              className="select-input"
+            >
+              <option value="">--Please choose an option--</option>
+              <option value="tailwindcss">Tailwind CSS</option>
+              <option value="customcss">Custom CSS Classes</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label htmlFor="additionalInput" className="form-label">Additional Input</label>
+            <textarea 
+              id="additionalInput" 
+              value={additionalInput} 
+              onChange={handleAdditionalInputChange}
+              className="textarea-input"
+              rows="5"
+              placeholder="Enter any additional instructions or requirements..."
+            />
+          </div>
+          <button type="submit" className="submit-button">Generate Code</button>
+        </form>
 
-      {generatedCode.jsx && (
-        <div className="code-section">
-          <h2 className="code-title">Generated JSX Code:</h2>
-          <pre className="code-display">
-            {generatedCode.jsx}
-          </pre>
-          <button onClick={() => copyToClipboard(generatedCode.jsx)} className="copy-button">
-            Copy JSX
-          </button>
-        </div>
-      )}
+        {generatedCode.jsx && (
+          <div className="code-section">
+            <h2 className="code-title">Generated JSX Code</h2>
+            <pre className="code-display">
+              <code>{generatedCode.jsx}</code>
+            </pre>
+            <button onClick={() => copyToClipboard(generatedCode.jsx)} className="copy-button">
+              Copy JSX
+            </button>
+          </div>
+        )}
 
-      {generatedCode.css && (
-        <div className="code-section">
-          <h2 className="code-title">Generated CSS Code:</h2>
-          <pre className="code-display">
-            {generatedCode.css}
-          </pre>
-          <button onClick={() => copyToClipboard(generatedCode.css)} className="copy-button">
-            Copy CSS
-          </button>
-        </div>
-      )}
+        {generatedCode.css && (
+          <div className="code-section">
+            <h2 className="code-title">Generated CSS Code</h2>
+            <pre className="code-display">
+              <code>{generatedCode.css}</code>
+            </pre>
+            <button onClick={() => copyToClipboard(generatedCode.css)} className="copy-button">
+              Copy CSS
+            </button>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
